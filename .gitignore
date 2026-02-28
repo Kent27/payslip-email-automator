@@ -1,0 +1,16 @@
+.env
+.env.*
+
+credentials/
+output/
+
+__pycache__/
+*.py[cod]
+
+data/employees.json
+data/claims.json
+data/claims/
+
+Payslip January 2026 - Eric Wiyanto.pdf
+
+.DS_Store
