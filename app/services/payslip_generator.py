@@ -11,7 +11,7 @@ from app.models.payslip_models import PayslipData
 
 
 def _format_currency(amount: float) -> str:
-    return f"{amount:,.2f}"
+    return f"Rp {amount:,.0f}"
 
 
 def render_payslip_html(payslip_data: PayslipData, template_path: Path = PAYSLIP_TEMPLATE) -> str:

@@ -9,125 +9,156 @@
       color: #1f2933;
       margin: 32px;
     }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
     .title {
       font-size: 24px;
       font-weight: 700;
+      margin-bottom: 16px;
     }
     .section {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
-    .label {
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .info-table td {
+      padding: 4px 0;
+    }
+    .info-label {
+      width: 180px;
       color: #52606d;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 8px;
+      font-size: 13px;
     }
     th, td {
       text-align: left;
       padding: 8px 12px;
       border-bottom: 1px solid #e4e7eb;
-      font-size: 13px;
     }
     th {
       background: #f5f7fa;
     }
-    .totals {
-      margin-top: 16px;
+    .amount {
       text-align: right;
     }
-    .totals div {
-      margin: 4px 0;
+    .total-row td {
+      font-weight: 600;
     }
-    .highlight {
+    .net-pay {
+      display: flex;
+      justify-content: space-between;
       font-weight: 700;
       font-size: 16px;
+      margin-top: 12px;
+    }
+    .payment-statement {
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    .payment-label {
+      color: #52606d;
+      margin-bottom: 4px;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div>
-      <div class="title">Payslip</div>
-      <div>{{ payslip.period }}</div>
-    </div>
-    <div>
-      <div class="label">Generated</div>
-      <div>{{ payslip.generated_at }}</div>
-    </div>
+  <div class="title">Payslip</div>
+
+  <div class="section">
+    <table class="info-table">
+      <tr>
+        <td class="info-label">Date of Joining :</td>
+        <td>{{ payslip.date_of_joining or "-" }}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Pay Period :</td>
+        <td>{{ payslip.pay_period_label }}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Worked Days :</td>
+        <td>{{ payslip.worked_days }}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Employee Name :</td>
+        <td>{{ payslip.employee_name }}</td>
+      </tr>
+      <tr>
+        <td class="info-label">Designation :</td>
+        <td>{{ payslip.designation or "-" }}</td>
+      </tr>
+    </table>
   </div>
 
   <div class="section">
-    <div class="label">Employee</div>
-    <div>{{ payslip.employee_name }}</div>
-    <div>{{ payslip.employee_email }}</div>
-  </div>
-
-  <div class="section">
-    <div class="label">Salary</div>
+    <div class="section-title">Earnings</div>
     <table>
       <thead>
         <tr>
           <th>Description</th>
-          <th>Amount (IDR)</th>
+          <th class="amount">Amount</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Base Salary</td>
-          <td>{{ payslip.base_salary | currency }}</td>
+          <td>Basic Pay</td>
+          <td class="amount">{{ payslip.base_salary | currency }}</td>
         </tr>
-        <tr>
-          <td>Prorated Salary ({{ payslip.worked_days }} / {{ payslip.total_working_days }} days)</td>
-          <td>{{ payslip.prorated_salary | currency }}</td>
+        {% if payslip.benefits %}
+          {% for benefit in payslip.benefits %}
+          <tr>
+            <td>{{ benefit.type }}</td>
+            <td class="amount">{{ benefit.approved | currency }}</td>
+          </tr>
+          {% endfor %}
+        {% endif %}
+        <tr class="total-row">
+          <td>Total Earnings</td>
+          <td class="amount">{{ payslip.total_earnings | currency }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="section">
-    <div class="label">Benefits</div>
+    <div class="section-title">Deductions</div>
     <table>
       <thead>
         <tr>
-          <th>Benefit Type</th>
-          <th>Claimed</th>
-          <th>Approved</th>
-          <th>Limit</th>
+          <th>Description</th>
+          <th class="amount">Amount</th>
         </tr>
       </thead>
       <tbody>
-        {% if payslip.benefits %}
-          {% for benefit in payslip.benefits %}
-          <tr>
-            <td>{{ benefit.type }}</td>
-            <td>{{ benefit.claimed | currency }}</td>
-            <td>{{ benefit.approved | currency }}</td>
-            <td>{{ benefit.limit | currency }}</td>
-          </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td colspan="4">No benefits claimed</td>
-          </tr>
-        {% endif %}
+        <tr>
+          <td>Prorated Reduction - {{ payslip.days_unworked }} days unworked</td>
+          <td class="amount">{{ payslip.prorated_deduction | currency }}</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total Deductions</td>
+          <td class="amount">{{ payslip.total_deductions | currency }}</td>
+        </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="totals">
-    <div>Total Benefits: {{ payslip.total_benefits | currency }}</div>
-    <div class="highlight">Net Pay: {{ payslip.net_pay | currency }}</div>
+  <div class="net-pay">
+    <div>Net Pay</div>
+    <div>{{ payslip.net_pay | currency }}</div>
+  </div>
+
+  <div class="payment-statement">
+    <div class="payment-label">Payment Statement</div>
+    <div>{{ payslip.company_name }}</div>
   </div>
 </body>
 </html>
