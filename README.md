@@ -1,5 +1,40 @@
 # Payslip Email Automator CLI
 
+## Prerequisites
+
+PDF generation (WeasyPrint) requires these system libraries. Install them before setting up the Python environment.
+
+**macOS (Homebrew):**
+```bash
+brew install cairo pango gdk-pixbuf libffi
+```
+
+**Debian/Ubuntu:**
+```bash
+sudo apt-get install libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+```
+
+## Holidays Configuration
+
+Working day calculations exclude weekends and any dates listed in `data/holidays_id.json` (or the file set by `DATA_DIR`).
+If the file is missing or invalid, holidays are treated as empty.
+
+Supported formats:
+
+```json
+[
+  "2026-01-01",
+  "2026-01-29"
+]
+```
+
+```json
+{
+  "2026": ["2026-01-01", "2026-01-29"],
+  "2027": ["2027-03-11"]
+}
+```
+
 ## CLI Commands (all available)
 
 ### Auth

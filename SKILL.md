@@ -29,7 +29,9 @@ If any required input is missing, ask the user before proceeding.
 3. Configure `.env` in the repo with required variables:
    - `GMAIL_SENDER_EMAIL`, `SENDER_NAME`, `COMPANY_NAME`
    - `OPENAI_API_KEY` (needed for invoice parsing)
-4. Run Gmail OAuth setup once before any send:
+4. Ensure `data/holidays_id.json` exists (or `DATA_DIR` points to a directory with it).
+   Holidays can be a JSON list of dates or a year-to-dates map.
+5. Run Gmail OAuth setup once before any send:
    - `python3 -m app.cli auth setup-gmail`
 
 ## Workflow
